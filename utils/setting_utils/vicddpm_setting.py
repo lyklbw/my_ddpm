@@ -102,21 +102,17 @@ def create_gaussian_diffusion(
 
 
 # -------- model --------
-
 def model_defaults():
-    """
-    Defaults for image training.
-    """
     return dict(
-        image_size=128,
+        image_size=80, # Changed from 128
         model_channels=128,
         learn_sigma=False,
         num_res_blocks=2,
-        attention_resolutions="20",
+        attention_resolutions="10", # Changed from "20" based on new size
         dropout=0,
-        channel_mult="",
+        channel_mult="", # (1, 1, 2, 2, 4) might need adjustment for 80x80? Default could be okay.
         use_checkpoint=False,
-        use_fp16=True,
+        use_fp16=True, # Keep True if using compatible GPUs
         num_heads=4,
         num_head_channels=-1,
         num_heads_upsample=-1,
@@ -124,6 +120,28 @@ def model_defaults():
         resblock_updown=True,
         use_new_attention_order=False,
     )
+# def model_defaults():
+#     """
+#     Defaults for image training.
+#     """
+    # return dict(
+    #     image_size=80,
+    #     model_channels=128,
+    #     learn_sigma=False,
+    #     num_res_blocks=2,
+    #     attention_resolutions="20",
+    #     dropout=0,
+    #     channel_mult="",
+    #     use_checkpoint=False,
+    #     use_fp16=True,
+    #     num_heads=4,
+    #     num_head_channels=-1,
+    #     num_heads_upsample=-1,
+    #     use_scale_shift_norm=True,
+    #     resblock_updown=True,
+    #     use_new_attention_order=False,
+    # )
+    
 
 
 def create_model(
@@ -219,7 +237,7 @@ def test_setting_defaults():
     Defaults for training.
     """
     return dict(
-        image_size=128,
+        image_size=80,
         batch_size=1,
         log_interval=1,
         model_save_dir="",

@@ -61,9 +61,13 @@ class TestLoop:
 
     # ytxie: This function wraps the whole test process.
     def run_loop(self):
+
         for data_item in self.data:
-            self.forward_backward(data_item)
             self.step += 1
+
+            if self.step % 10 != 4:
+                continue
+            self.forward_backward(data_item)
             if self.debug_mode or self.step % self.log_interval == 0:
                 show_gpu_usage(f"step: {self.step}, device: {dist.get_rank()}", idx=dist.get_rank())
 

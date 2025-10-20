@@ -329,12 +329,10 @@ class GaussianDiffusion:
                       (x_t - _extract_into_tensor(self.bar_betas, t, x_t.shape) * eps)
         pred_xstart = self._clip(pred_xstart, clip=clip)
         model_mean, _, _ = self.q_posterior_mean_variance(x_start=pred_xstart, x_t=x_t, t=t)
-
         # compute one sample of x_{t-1}
         noise = th.randn_like(x_t)
         nonzero_mask = (t != 0).float().view(-1, *([1] * (len(x_t.shape) - 1)))  # no noise when t == 0
         sample = model_mean + nonzero_mask * std * noise
-
         return sample
 
     def ddim_predictor(self, model, x_t, t, model_kwargs=None, clip=False):
@@ -395,7 +393,7 @@ class GaussianDiffusion:
         if noise is not None:
             img = noise
         elif self.diffusion_type == DiffusionType.DDPM:
-            img = th.randn(*shape, device=device)
+            img = th.randn_like(model_kwargs['condition_input']).to(device)
         elif self.diffusion_type == DiffusionType.SCORE:
             assert False, "code fo score-based model has not been completed"
         else:
@@ -420,6 +418,7 @@ class GaussianDiffusion:
 
         for i in indices:
             t = th.tensor([i] * shape[0], device=device)
+
             with th.no_grad():
                 img = predictor(model, img, t, model_kwargs=model_kwargs, clip=clip)
                 if corrector is not None:
@@ -441,7 +440,6 @@ class GaussianDiffusion:
         """
         if model_kwargs is None:
             model_kwargs = {}
-
         x_t, noise = self.q_sample(x_start, t)
 
         terms = {}

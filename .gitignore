@@ -1,0 +1,16 @@
+data/
+smos_model/
+*__pycache__/
+.../
+.cache/
+.vscode/
+.DS_Store
+.ipynb_checkpoints/
+log/
+logs/
+logs_test/
+data/
+*.log
+smos_model/
+smos_model_test/
+test_ouput/

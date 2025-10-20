@@ -18,13 +18,13 @@ Then modify the "model_save_dir" and run testing.
 
 ```
 SCRIPT_FLAGS="--method_type vicddpm"
-DATASET_FLAGS="--dataset galaxy \
+DATASET_FLAGS="--dataset smos \
 --batch_size 1 --num_workers 2"
-TEST_FLAGS="--model_save_dir ... --resume_checkpoint model025000.pt \
---output_dir ... \
+TEST_FLAGS="--model_save_dir ./smos_model/ --resume_checkpoint ema_0.9999_003000.pt \
+--output_dir ./test_output \
 --debug_mode False"
 
-python -m torch.distributed.launch --nproc_per_node=6 test.py $SCRIPT_FLAGS $DATASET_FLAGS $TEST_FLAGS
+torchrun --standalone --nproc_per_node=1 test.py $SCRIPT_FLAGS $DATASET_FLAGS $TEST_FLAGS
 ```
 
 
@@ -32,11 +32,10 @@ python -m torch.distributed.launch --nproc_per_node=6 test.py $SCRIPT_FLAGS $DAT
 
 ```
 SCRIPT_FLAGS="--method_type vicddpm"
-DATASET_FLAGS="--dataset galaxy --batch_size 24 --num_workers 6"
-TRAIN_FLAGS="--microbatch 32 --save_interval 5000 --max_step 25000 \
---model_save_dir ..."
+DATASET_FLAGS="--dataset smos --batch_size 64 --num_workers 6"
+TRAIN_FLAGS="--microbatch 32 --save_interval 10000 --max_step 150000 --model_save_dir ./smos_model"
 
-python -m torch.distributed.launch --nproc_per_node=6 train.py $SCRIPT_FLAGS $DATASET_FLAGS $TRAIN_FLAGS
+torchrun --standalone --nproc_per_node=1 train.py $SCRIPT_FLAGS $DATASET_FLAGS $TRAIN_FLAGS
 ```
 
 

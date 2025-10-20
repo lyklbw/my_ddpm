@@ -4,7 +4,7 @@ Based on the source code from Xie, Yutong, and Quanzheng Li. "Measurement-condit
 
 from utils.ddpm_utils.gaussian_diffusion import *
 from utils.ddpm_utils.gaussian_diffusion import _extract_into_tensor, _WrappedModel
-
+import tqdm
 
 class GaussianDiffusion(GaussianDiffusion):
     """
@@ -130,7 +130,6 @@ class GaussianDiffusion(GaussianDiffusion):
 
         # -------- modified part --------
         assert model_kwargs is not None, "model_kwargs contains the condtions"
-
         if noise is not None:
             img = noise 
         elif self.diffusion_type == DiffusionType.DDPM:
@@ -161,14 +160,17 @@ class GaussianDiffusion(GaussianDiffusion):
         else:
             raise NotImplementedError(self.corrector_type)
 
-
-        for i in indices:
+        imgs = []
+        for i in tqdm.tqdm(indices, desc="sampling loop time step", total=len(indices)):
             t = th.tensor([i] * shape[0], device=device)
+
             with th.no_grad():
                 img = predictor(model, img, t, model_kwargs=model_kwargs, clip=clip)
                 if corrector is not None:
                     assert False, "code of corrector has not been completed"
-        return img
+            if i % 10 == 0:
+                imgs.append(img.cpu().numpy())
+        return img, imgs
 
     def training_losses(self, model, x_start, t, model_kwargs):
         assert model_kwargs is not None, "model_kwargs contains the condtions"

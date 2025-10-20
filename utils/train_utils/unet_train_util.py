@@ -20,6 +20,7 @@ class UNetTrainLoop(TrainLoop):
     def forward_backward(self, batch):
         batch, label = self.batch_process(batch)
         self.mp_trainer.zero_grad()
+        losses = th.zeros(0).to(dist_util.dev())
         for i in range(0, batch.shape[0], self.microbatch):
             micro_input = batch[i: i + self.microbatch].to(dist_util.dev())
             micro_label = label[i: i + self.microbatch].to(dist_util.dev())
@@ -40,4 +41,7 @@ class UNetTrainLoop(TrainLoop):
 
             logger.log_kv("loss", loss)
             self.mp_trainer.backward(loss)
+            losses = th.cat([losses, loss.detach().unsqueeze(0)], dim=0)
+
+        return th.mean(losses)
 

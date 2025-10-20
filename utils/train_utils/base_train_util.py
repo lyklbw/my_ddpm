@@ -6,6 +6,7 @@ import torch as th
 import torch.distributed as dist
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 from torch.optim import AdamW
+import time
 
 
 from utils import dist_util, logger
@@ -156,17 +157,22 @@ class TrainLoop:
                 not self.lr_anneal_steps
                 or self.step < self.lr_anneal_steps
         ):
-            self.run_step(next(self.data))
+            loss = self.run_step(next(self.data))
+            
+
             self.step += 1
 
             if (self.debug_mode and self.step % self.log_interval == 0) or \
                     (not self.debug_mode and self.step == self.log_interval) or \
                     (self.step % self.save_interval == 0):
                 show_gpu_usage(f"step: {self.step}, device: {dist.get_rank()}", idx=dist.get_rank())
-            show_gpu_usage(f"step: {self.step}, device: {dist.get_rank()}", idx=dist.get_rank())
+            
 
             if self.step % self.log_interval == 0 and self.step <= 10 * self.log_interval:
                 logger.log(f"have trained {self.step} step")
+            if self.step % self.log_interval == 0:
+                print(f"time {time.time()} step {self.step}: loss = {loss}")
+
 
             if self.step % self.log_interval == 0:
                 logger.write_kv(self.step)
@@ -187,11 +193,12 @@ class TrainLoop:
             self.save()
 
     def run_step(self, batch):
-        self.forward_backward(batch)
+        loss = self.forward_backward(batch)
         took_step = self.mp_trainer.optimize(self.opt)
         if took_step:
             self._update_ema()
         self._anneal_lr()
+        return loss
 
     def forward_backward(self, batch):
         pass

@@ -223,8 +223,9 @@ class CrossAttention(nn.Module):
         return self.to_out(out)
 
 
+# In models/attention2.py
 class BasicTransformerBlock(nn.Module):
-    def __init__(self, dim, n_heads, d_head, dropout=0., context_dim=None, gated_ff=True, checkpoint=True):
+    def __init__(self, dim, n_heads, d_head, dropout=0., context_dim=None, gated_ff=True, checkpoint=True): # Keep True by default
         super().__init__()
         self.attn1 = CrossAttention(query_dim=dim, heads=n_heads, dim_head=d_head, dropout=dropout)  # is a self-attention
         self.ff = FeedForward(dim, dropout=dropout, glu=gated_ff)
@@ -235,16 +236,41 @@ class BasicTransformerBlock(nn.Module):
         self.norm3 = nn.LayerNorm(dim)
         self.checkpoint = checkpoint
 
-    def forward(self, x, context):
-        return checkpoint(self._forward, (x, context), self.parameters(), True)
+    # <<< MODIFIED CODE START >>>
+    def forward(self, x, context=None): # Added default None to context for clarity
+        inputs_for_checkpoint = (x,)
+        if context is not None:
+            inputs_for_checkpoint += (context,)
 
-    def _forward(self, x, context):
-        x = x.to(torch.float32)
-        x = self.attn1(self.norm1(x)) + x
-        x = self.attn2(self.norm2(x), context) + x
+        if self.checkpoint:
+             return checkpoint(self._forward_wrapper, inputs_for_checkpoint, self.parameters(), True)
+        else:
+             return self._forward(x, context)
 
-        x = self.ff(self.norm3(x)) + x
+    def _forward_wrapper(self, *args):
+        if len(args) == 1:
+            x = args[0]
+            context = None
+        elif len(args) == 2:
+            x, context = args
+        else:
+             raise ValueError(f"Unexpected number of arguments in _forward_wrapper: {len(args)}")
+        return self._forward(x, context)
+
+    def _forward(self, x, context=None): # Added default None for clarity
+        # Align dtypes with module parameters to avoid LN dtype mismatch under AMP/checkpoint
+        target_dtype = self.norm1.weight.dtype
+        if x.dtype != target_dtype:
+            x = x.to(target_dtype)
+        if context is not None and context.dtype != target_dtype:
+            context = context.to(target_dtype)
+
+        x = self.attn1(self.norm1(x)) + x  # Self-attention
+        x = self.attn2(self.norm2(x), context=context) + x  # Cross/self attention
+        x = self.ff(self.norm3(x)) + x  # FeedForward
         return x
+    # <<< MODIFIED CODE END >>>
+
 
 
 class SpatialTransformer(nn.Module):
@@ -283,14 +309,33 @@ class SpatialTransformer(nn.Module):
         # note: if no context is given, cross-attention defaults to self-attention
         b, c, h, w = x.shape
         x_in = x
-        x = x.to(torch.float32)
-        x = self.norm(x)
-        x = x.to(torch.float16)
+
+        # Normalize in fp32 for stability
+        x32 = x.to(torch.float32)
+        x32 = self.norm(x32)
+
+        # Project in with layer dtype
+        proj_in_dtype = self.proj_in.weight.dtype
+        x = x32.to(proj_in_dtype)
         x = self.proj_in(x)
+
+        # Tokens
         x = rearrange(x, 'b c h w -> b (h w) c')
+
+        # Ensure emb matches token dtype
+        if emb is not None and emb.dtype != x.dtype:
+            emb = emb.to(x.dtype)
+
+        # Transformer blocks
         for block in self.transformer_blocks:
             x = block(x, context=emb)
+
+        # Back to image
         x = rearrange(x, 'b (h w) c -> b c h w', h=h, w=w)
-        x = x.to(torch.float16)
+
+        # Project out with layer dtype, then match residual dtype
+        proj_out_dtype = self.proj_out.weight.dtype
+        x = x.to(proj_out_dtype)
         x = self.proj_out(x)
-        return x + x_in
+
+        return x.to(x_in.dtype) + x_in

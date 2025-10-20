@@ -698,6 +698,7 @@ class UNetModel(nn.Module):
 
 
         h = x.type(self.dtype)
+        # import ipdb; ipdb.set_trace()
         for module in self.input_blocks:
             h = module(h, emb)
             hs.append(h)

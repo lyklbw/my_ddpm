@@ -3,7 +3,7 @@ import functools
 from utils import dist_util, logger
 from utils.ddpm_utils.resample import LossAwareSampler, UniformSampler
 from utils.train_utils.base_train_util import TrainLoop
-
+import torch as th
 
 class DDPMTrainLoop(TrainLoop):
 
@@ -19,6 +19,7 @@ class DDPMTrainLoop(TrainLoop):
     def forward_backward(self, batch):
         batch, cond = self.batch_process(batch)
         self.mp_trainer.zero_grad()
+        losses_to_save = []
         for i in range(0, batch.shape[0], self.microbatch):
             micro = batch[i: i + self.microbatch].to(dist_util.dev())
             micro_cond = {
@@ -52,6 +53,10 @@ class DDPMTrainLoop(TrainLoop):
                 self.diffusion, t, {k: v * weights for k, v in losses.items()}
             )
             self.mp_trainer.backward(loss)
+            losses_to_save.append(loss.detach())
+
+            # print(f"loss: {loss.item()}")
+        return th.mean(th.stack(losses_to_save).to(dist_util.dev()))
 
 
 def log_loss_dict(diffusion, ts, losses):
