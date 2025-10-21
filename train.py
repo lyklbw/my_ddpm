@@ -38,7 +38,6 @@ def main():
         model_args = args_to_dict(args, method_setting.model_defaults().keys())
         save_args_dict(model_args, os.path.join(args.model_save_dir, "model_args.pkl"))
     model = method_setting.create_model(**model_args)
-    import ipdb; ipdb.set_trace()
     model.to(dist_util.dev())
 
     logger.log("creating data loader...")

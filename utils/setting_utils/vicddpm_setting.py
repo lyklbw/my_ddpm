@@ -105,7 +105,7 @@ def create_gaussian_diffusion(
 def model_defaults():
     return dict(
         image_size=80, # Changed from 128
-        model_channels=128,
+        model_channels=32,
         learn_sigma=False,
         num_res_blocks=2,
         attention_resolutions="10", # Changed from "20" based on new size

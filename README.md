@@ -32,11 +32,28 @@ torchrun --standalone --nproc_per_node=1 test.py $SCRIPT_FLAGS $DATASET_FLAGS $T
 
 ```
 SCRIPT_FLAGS="--method_type vicddpm"
-DATASET_FLAGS="--dataset smos --batch_size 64 --num_workers 6"
-TRAIN_FLAGS="--microbatch 32 --save_interval 10000 --max_step 150000 --model_save_dir ./smos_model"
+DATASET_FLAGS="--dataset smos --batch_size 1024 --num_workers 64"
+TRAIN_FLAGS="--microbatch 1024 --save_interval 2000 --max_step 200000 --model_save_dir ./smos_model"
 
-torchrun --standalone --nproc_per_node=1 train.py $SCRIPT_FLAGS $DATASET_FLAGS $TRAIN_FLAGS
+torchrun --standalone --nproc_per_node=2 train.py $SCRIPT_FLAGS $DATASET_FLAGS $TRAIN_FLAGS
 ```
+
+/home/micdz/miniconda3/envs/ddpm_rfi/bin/torchrun --standalone --nproc_per_node=1 train.py \
+  --method_type vicddpm \
+  --dataset smos \
+  --batch_size 16 \
+  --num_workers 6 \
+  --microbatch 32 \
+  --save_interval 10000 \
+  --max_step 150000 \
+  --model_save_dir ./smos_model
+
+
+Note
+- The torchrun options must come before the script name. If you run `torchrun train.py --standalone ...`, or pass `--standalone`/`--nproc_per_node` to Python directly, you will get an error like: `train.py: error: unrecognized arguments: --standalone --nproc_per_node=1 ...`.
+- Single-GPU alternatives:
+	- Using torchrun: `torchrun --standalone --nproc_per_node=1 train.py $SCRIPT_FLAGS $DATASET_FLAGS $TRAIN_FLAGS`
+	- Or without torchrun: `python train.py $SCRIPT_FLAGS $DATASET_FLAGS $TRAIN_FLAGS` (omit any torchrun flags)
 
 
 

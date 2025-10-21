@@ -1,0 +1,17 @@
+{
+  "os": "Linux-4.19.90-2107.6.0.0192.8.oe1.bclinux.x86_64-x86_64-with-glibc2.35",
+  "python": "CPython 3.12.3",
+  "startedAt": "2025-10-21T03:21:33.231100Z",
+  "program": "/root/autodl-tmp/my_ddpm/wandb_test.py",
+  "codePath": "wandb_test.py",
+  "codePathLocal": "wandb_test.py",
+  "git": {
+    "remote": "git@github.com:lyklbw/my_ddpm.git",
+    "commit": "af03afb8d805c233cdbb2cf54e8d7845f00bf094"
+  },
+  "email": "1512972802@qq.com",
+  "root": "/root/autodl-tmp/my_ddpm",
+  "host": "autodl-container-0a974485ba-53e52fe7",
+  "executable": "/root/miniconda3/bin/python",
+  "writerId": "0gytapazky6ox49jj30kp8nq5q8657oa"
+}
