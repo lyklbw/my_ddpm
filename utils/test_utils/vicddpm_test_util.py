@@ -62,6 +62,9 @@ class VICDDPMTestLoop(DDPMTestLoop):
         self.mae_list.append(mae) # Store MAE for averaging later
         # Log the MAE for this specific sample
         logger.log(f"MAE for {file_name} slice {slice_index}: {mae:.6f}")
+        sum = np.sum(np.abs(target_cropped))
+        logger.log(f"Relative MAE for {file_name} slice {slice_index}: {mae / (sum ) :.6f}")
+
         # Log MAE to tensorboard/kv dict if logger supports it directly
         logger.log_kv(f"MAE_slice_{slice_index}", mae) # Log individual MAE
         #计算绝对平均误差
@@ -109,8 +112,6 @@ class VICDDPMTestLoop(DDPMTestLoop):
                 clip=False
             )
 
-
-
             samples.append(sample.cpu().detach().numpy())
             break
         samples = np.concatenate(samples, axis=0)
@@ -156,9 +157,9 @@ class VICDDPMTestLoop(DDPMTestLoop):
         condition_cropped = condition_padded[:, pad_top:pad_top+h_orig, pad_left:pad_left+w_orig] # [2, 69, 69]
 
         # Save cropped versions as .npy
-        np.save(os.path.join(samples_path, "target_original.npy"), target_cropped)
-        np.save(os.path.join(samples_path, "input_corrupted.npy"), condition_cropped)
-        np.save(os.path.join(samples_path, "generated_mean.npy"), mean_generated_cropped)
+        # np.save(os.path.join(samples_path, "target_original.npy"), target_cropped)
+        # np.save(os.path.join(samples_path, "input_corrupted.npy"), condition_cropped)
+        # np.save(os.path.join(samples_path, "generated_mean.npy"), mean_generated_cropped)
 
         # Save individual samples if needed
         for i in range(min(MAX_NUM_SAVED_SAMPLES, len(generated_samples_cropped))):

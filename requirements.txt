@@ -1,0 +1,17 @@
+blobfile==3.1.0
+ehtim==1.2.10
+einops==0.8.1
+h5py==3.15.1
+ipdb==0.13.13
+matplotlib==3.10.7
+numpy==2.3.4
+pandas==2.3.3
+Pillow==12.0.0
+pynvml==13.0.1
+pytorch_lightning==2.5.5
+scipy==1.16.2
+scikit-image
+tensorboardX==2.6.4
+torch==2.9.0
+torchvision==0.24.0
+tqdm==4.67.1
