@@ -1,0 +1,35 @@
+{
+  "os": "Linux-4.19.90-2107.6.0.0192.8.oe1.bclinux.x86_64-x86_64-with-glibc2.35",
+  "python": "CPython 3.12.3",
+  "startedAt": "2025-10-21T20:02:55.967838Z",
+  "args": [
+    "--method_type",
+    "vicddpm",
+    "--dataset",
+    "smos",
+    "--batch_size",
+    "32",
+    "--num_workers",
+    "1",
+    "--microbatch",
+    "32",
+    "--save_interval",
+    "12k",
+    "--max_step",
+    "25k",
+    "--model_save_dir",
+    "./smos_model"
+  ],
+  "program": "/root/autodl-tmp/my_ddpm/train.py",
+  "codePath": "train.py",
+  "codePathLocal": "train.py",
+  "git": {
+    "remote": "git@github.com:lyklbw/my_ddpm.git",
+    "commit": "7bc9449d04d56b2a57d9c70705f63841d1c4a42b"
+  },
+  "email": "1512972802@qq.com",
+  "root": "/root/autodl-tmp/my_ddpm",
+  "host": "autodl-container-0a974485ba-53e52fe7",
+  "executable": "/root/miniconda3/bin/python",
+  "writerId": "h7y3ncdlq6cxjd107uimq2e2btxa36by"
+}

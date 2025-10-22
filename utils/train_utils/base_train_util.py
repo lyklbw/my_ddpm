@@ -7,7 +7,7 @@ import torch.distributed as dist
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 from torch.optim import AdamW
 import time
-
+import wandb
 
 from utils import dist_util, logger
 from utils.debug_util import *
@@ -62,6 +62,7 @@ class TrainLoop:
         self.use_fp16 = use_fp16
         self.weight_decay = weight_decay
         self.lr_anneal_steps = lr_anneal_steps
+        self.target_lr = 1e-6
         self.max_step = max_step
         self.run_time = run_time
         self.debug_mode = debug_mode
@@ -155,7 +156,7 @@ class TrainLoop:
         start_time = time.time()
         while (
                 not self.lr_anneal_steps
-                or self.step < self.lr_anneal_steps
+                or self.step < self.max_step
         ):
             loss = self.run_step(next(self.data))
             
@@ -171,8 +172,8 @@ class TrainLoop:
             if self.step % self.log_interval == 0 and self.step <= 10 * self.log_interval:
                 logger.log(f"have trained {self.step} step")
             if self.step % self.log_interval == 0:
-                print(f"time {time.time()} step {self.step}: loss = {loss}")
-
+                print(f"time {time.time()} step {self.step}: loss = {loss}, lr = {self.opt.param_groups[0]['lr']}")
+                wandb.log({"loss": loss, "step": self.step, "lr": self.opt.param_groups[0]['lr']})
 
             if self.step % self.log_interval == 0:
                 logger.write_kv(self.step)
@@ -210,8 +211,8 @@ class TrainLoop:
     def _anneal_lr(self):
         if not self.lr_anneal_steps:
             return
-        frac_done = self.step / self.lr_anneal_steps
-        lr = self.lr * (1 - frac_done)
+        anneal_frac_done = min(self.step / self.lr_anneal_steps, 1)
+        lr = self.lr * (1 - anneal_frac_done) + self.target_lr * anneal_frac_done
         for param_group in self.opt.param_groups:
             param_group["lr"] = lr
 

@@ -13,6 +13,7 @@ TARGET_SIZE = 80 # Padded size
 class SMOSDataset(Dataset):
     def __init__(self, data_path_corrupted, data_path_original, target_size=TARGET_SIZE):
         super().__init__()
+        #true data set
         # print(f"Loading corrupted data from: {data_path_corrupted}")
         # self.data_corrupted = torch.load(data_path_corrupted)
         # print(f"Loading original data from: {data_path_original}")

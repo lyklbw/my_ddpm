@@ -9,8 +9,8 @@ def training_dataset_defaults():
         dataset="smos", # Changed default dataset
         # data_dir="../datasets/galaxy/knee_singlecoil_train", # Removed or commented out
         # data_info_list_path="", # Removed or commented out
-        data_path_corrupted="./data/D_tensor_all.pt", # Added - Specify via command line
-        data_path_original="./data/D_original_tensor_all.pt", # Added - Specify via command line
+        data_path_corrupted="./data/test_smos_D.pt", # Added - Specify via command line
+        data_path_original="./data/test_smos_D.pt", # Added - Specify via command line
         batch_size=1,
         # acceleration=4, # Removed or commented out
         # random_flip=False, # Removed or commented out (can be added back to smos_dataset if needed)
@@ -73,8 +73,8 @@ def test_dataset_defaults():
         dataset="smos", # Changed default dataset
         # data_dir="../dataset/galaxy/knee_singlecoil_val", # Removed or commented out
         # data_info_list_path="", # Removed or commented out
-        data_path_corrupted="", # Added - Specify via command line
-        data_path_original="", # Added - Specify via command line
+        data_path_corrupted="./data/test_smos_D.pt", # Added - Specify via command line
+        data_path_original="./data/test_smos_D.pt", # Added - Specify via command line
         batch_size=1, # Test batch size usually 1
         # acceleration=4, # Removed or commented out
         # random_flip=False, # Removed or commented out

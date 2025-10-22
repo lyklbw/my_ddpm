@@ -1,0 +1,83 @@
+_wandb:
+    value:
+        cli_version: 0.22.2
+        e:
+            beiuoaj6gw6nzoebgo8zake7b24821tt:
+                args:
+                    - --method_type
+                    - vicddpm
+                    - --dataset
+                    - smos
+                    - --batch_size
+                    - "256"
+                    - --num_workers
+                    - "6"
+                    - --microbatch
+                    - "256"
+                    - --save_interval
+                    - "10_000"
+                    - --max_step
+                    - "2_500_000"
+                    - --model_save_dir
+                    - ./smos_model
+                    - --lr_anneal_steps
+                    - "2_300_000"
+                codePath: train.py
+                codePathLocal: train.py
+                cpu_count: 56
+                cpu_count_logical: 112
+                cudaVersion: "12.4"
+                disk:
+                    /:
+                        total: "32212254720"
+                        used: "10273607680"
+                email: 1512972802@qq.com
+                executable: /root/miniconda3/bin/python
+                git:
+                    commit: 7bc9449d04d56b2a57d9c70705f63841d1c4a42b
+                    remote: git@github.com:lyklbw/my_ddpm.git
+                gpu: NVIDIA A800 80GB PCIe
+                gpu_count: 2
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "85899345920"
+                      name: NVIDIA A800 80GB PCIe
+                      uuid: GPU-ccdbcb78-0a46-0e43-ec8a-9f122196ed37
+                    - architecture: Ampere
+                      cudaCores: 6912
+                      memoryTotal: "85899345920"
+                      name: NVIDIA A800 80GB PCIe
+                      uuid: GPU-7109f415-be85-b44e-34df-b103ae925fc5
+                host: autodl-container-0a974485ba-53e52fe7
+                memory:
+                    total: "1081314701312"
+                os: Linux-4.19.90-2107.6.0.0192.8.oe1.bclinux.x86_64-x86_64-with-glibc2.35
+                program: /root/autodl-tmp/my_ddpm/train.py
+                python: CPython 3.12.3
+                root: /root/autodl-tmp/my_ddpm
+                startedAt: "2025-10-22T08:29:53.715332Z"
+                writerId: beiuoaj6gw6nzoebgo8zake7b24821tt
+        m: []
+        python_version: 3.12.3
+        t:
+            "1":
+                - 1
+                - 9
+                - 41
+                - 103
+            "2":
+                - 1
+                - 9
+                - 41
+                - 103
+            "3":
+                - 16
+            "4": 3.12.3
+            "5": 0.22.2
+            "12": 0.22.2
+            "13": linux-x86_64
+batch_size:
+    value: 32
+learning_rate:
+    value: 0.0001

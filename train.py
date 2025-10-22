@@ -1,6 +1,7 @@
 # In train.py
 import argparse
 import os
+import wandb
 from utils import dist_util, logger
 from utils.ddpm_utils.resample import create_named_schedule_sampler
 from utils.script_util import args_to_dict, add_dict_to_argparser, load_args_dict, save_args_dict
@@ -11,9 +12,10 @@ from utils.train_utils.vicddpm_train_util import VICDDPMTrainLoop
 # from utils.train_utils.unet_train_util import UNetTrainLoop # Comment out if not used
 
 def main():
+    wandb.init(project="ddpm_test", config={"learning_rate": 0.0001, "batch_size": 32})
+
     args = create_argparser().parse_args()
 
-    # distributed setting (no changes needed)
     is_distributed, rank = dist_util.setup_dist()
     logger.configure(args.log_dir, rank, is_distributed, is_write=True)
     logger.log("making device configuration...")
@@ -26,41 +28,34 @@ def main():
     else:
         raise ValueError("Invalid method_type specified") # Added clarity
 
+
     if not os.path.exists(args.model_save_dir):
         os.makedirs(args.model_save_dir, exist_ok=True)
+    #### lyklbw: above correct
 
     # create or load model (no changes needed for model creation itself)
     logger.log("creating model...")
-    if args.resume_checkpoint:
-        model_args = load_args_dict(os.path.join(args.model_save_dir, "model_args.pkl"))
-    else:
-        # Keys here should match vicddpm_setting.model_defaults()
-        model_args = args_to_dict(args, method_setting.model_defaults().keys())
-        save_args_dict(model_args, os.path.join(args.model_save_dir, "model_args.pkl"))
+    # Keys here should match vicddpm_setting.model_defaults()
+    model_args = args_to_dict(args, method_setting.model_defaults().keys())
+    save_args_dict(model_args, os.path.join(args.model_save_dir, "model_args.pkl"))
     model = method_setting.create_model(**model_args)
     model.to(dist_util.dev())
 
     logger.log("creating data loader...")
-    if args.resume_checkpoint:
-        data_args = load_args_dict(os.path.join(args.model_save_dir, "data_args.pkl"))
-    else:
-        # ---> Key Change: Ensure keys match updated dataset_setting.training_dataset_defaults() <---
-        data_keys = dataset_setting.training_dataset_defaults().keys()
-        logger.log(f"Extracting data args with keys: {list(data_keys)}") # Debug log
-        data_args = args_to_dict(args, data_keys)
-        save_args_dict(data_args, os.path.join(args.model_save_dir, "data_args.pkl"))
+    # ---> Key Change: Ensure keys match updated dataset_setting.training_dataset_defaults() <---
+    data_keys = dataset_setting.training_dataset_defaults().keys()
+    logger.log(f"Extracting data args with keys: {list(data_keys)}") # Debug log
+    data_args = args_to_dict(args, data_keys)
+    save_args_dict(data_args, os.path.join(args.model_save_dir, "data_args.pkl"))
     # The create_training_dataset function now handles the 'smos' type correctly
     data = dataset_setting.create_training_dataset(**data_args)
 
     logger.log("training...")
     # Training args loading (no changes needed)
-    if args.resume_checkpoint:
-        training_args = load_args_dict(os.path.join(args.model_save_dir, "training_args.pkl"))
-        training_args["resume_checkpoint"] = args.resume_checkpoint
-    else:
-        # Keys here should match vicddpm_setting.training_setting_defaults()
-        training_args = args_to_dict(args, method_setting.training_setting_defaults().keys())
-        save_args_dict(training_args, os.path.join(args.model_save_dir, "training_args.pkl"))
+    
+    # Keys here should match vicddpm_setting.training_setting_defaults()
+    training_args = args_to_dict(args, method_setting.training_setting_defaults().keys())
+    save_args_dict(training_args, os.path.join(args.model_save_dir, "training_args.pkl"))
 
     # Diffusion and Sampler creation (no changes needed)
     if args.method_type == "vicddpm":
@@ -88,6 +83,7 @@ def main():
             schedule_sampler=schedule_sampler,
             **training_args,
         ).run_loop()
+        wandb.finish()
 
     elif args.method_type == "unet":
         # Keep UNetTrainLoop if needed, otherwise remove

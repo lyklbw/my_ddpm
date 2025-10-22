@@ -1,0 +1,59 @@
+_wandb:
+    value:
+        cli_version: 0.22.2
+        e:
+            h7y3ncdlq6cxjd107uimq2e2btxa36by:
+                args:
+                    - --method_type
+                    - vicddpm
+                    - --dataset
+                    - smos
+                    - --batch_size
+                    - "32"
+                    - --num_workers
+                    - "1"
+                    - --microbatch
+                    - "32"
+                    - --save_interval
+                    - 12k
+                    - --max_step
+                    - 25k
+                    - --model_save_dir
+                    - ./smos_model
+                codePath: train.py
+                codePathLocal: train.py
+                email: 1512972802@qq.com
+                executable: /root/miniconda3/bin/python
+                git:
+                    commit: 7bc9449d04d56b2a57d9c70705f63841d1c4a42b
+                    remote: git@github.com:lyklbw/my_ddpm.git
+                host: autodl-container-0a974485ba-53e52fe7
+                os: Linux-4.19.90-2107.6.0.0192.8.oe1.bclinux.x86_64-x86_64-with-glibc2.35
+                program: /root/autodl-tmp/my_ddpm/train.py
+                python: CPython 3.12.3
+                root: /root/autodl-tmp/my_ddpm
+                startedAt: "2025-10-21T20:02:55.967838Z"
+                writerId: h7y3ncdlq6cxjd107uimq2e2btxa36by
+        m: []
+        python_version: 3.12.3
+        t:
+            "1":
+                - 1
+                - 9
+                - 41
+                - 103
+            "2":
+                - 1
+                - 9
+                - 41
+                - 103
+            "3":
+                - 16
+            "4": 3.12.3
+            "5": 0.22.2
+            "12": 0.22.2
+            "13": linux-x86_64
+batch_size:
+    value: 32
+learning_rate:
+    value: 0.0001

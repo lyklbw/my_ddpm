@@ -1,0 +1,67 @@
+{
+  "os": "Linux-4.19.90-2107.6.0.0192.8.oe1.bclinux.x86_64-x86_64-with-glibc2.35",
+  "python": "CPython 3.12.3",
+  "startedAt": "2025-10-22T08:17:55.218298Z",
+  "args": [
+    "--method_type",
+    "vicddpm",
+    "--dataset",
+    "smos",
+    "--batch_size",
+    "128",
+    "--num_workers",
+    "6",
+    "--microbatch",
+    "128",
+    "--save_interval",
+    "10_000",
+    "--max_step",
+    "150_000",
+    "--model_save_dir",
+    "./smos_model",
+    "--lr_anneal_steps",
+    "120_000"
+  ],
+  "program": "/root/autodl-tmp/my_ddpm/train.py",
+  "codePath": "train.py",
+  "codePathLocal": "train.py",
+  "git": {
+    "remote": "git@github.com:lyklbw/my_ddpm.git",
+    "commit": "7bc9449d04d56b2a57d9c70705f63841d1c4a42b"
+  },
+  "email": "1512972802@qq.com",
+  "root": "/root/autodl-tmp/my_ddpm",
+  "host": "autodl-container-0a974485ba-53e52fe7",
+  "executable": "/root/miniconda3/bin/python",
+  "cpu_count": 56,
+  "cpu_count_logical": 112,
+  "gpu": "NVIDIA A800 80GB PCIe",
+  "gpu_count": 2,
+  "disk": {
+    "/": {
+      "total": "32212254720",
+      "used": "10271973376"
+    }
+  },
+  "memory": {
+    "total": "1081314701312"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA A800 80GB PCIe",
+      "memoryTotal": "85899345920",
+      "cudaCores": 6912,
+      "architecture": "Ampere",
+      "uuid": "GPU-ccdbcb78-0a46-0e43-ec8a-9f122196ed37"
+    },
+    {
+      "name": "NVIDIA A800 80GB PCIe",
+      "memoryTotal": "85899345920",
+      "cudaCores": 6912,
+      "architecture": "Ampere",
+      "uuid": "GPU-7109f415-be85-b44e-34df-b103ae925fc5"
+    }
+  ],
+  "cudaVersion": "12.4",
+  "writerId": "ontbkxo434rrxwgw3hp7e94cyarkf7q0"
+}

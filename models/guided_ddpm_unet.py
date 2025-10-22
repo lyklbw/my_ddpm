@@ -584,17 +584,17 @@ class UNetModel(nn.Module):
                 use_checkpoint=use_checkpoint,
                 use_scale_shift_norm=use_scale_shift_norm,
         )
-        self.AttentionBlock = AttentionBlock(
-                            ch,
-                            use_checkpoint=use_checkpoint,
-                            num_heads=num_heads_upsample,
-                            num_head_channels=num_head_channels,
-                            use_new_attention_order=use_new_attention_order,
-                        )
-        self.midSpatialTransformer = SpatialTransformer(
-                            ch,
-                            n_heads = num_heads,
-        )
+        # self.AttentionBlock = AttentionBlock(
+        #                     ch,
+        #                     use_checkpoint=use_checkpoint,
+        #                     num_heads=num_heads_upsample,
+        #                     num_head_channels=num_head_channels,
+        #                     use_new_attention_order=use_new_attention_order,
+        #                 )
+        # self.midSpatialTransformer = SpatialTransformer(
+        #                     ch,
+        #                     n_heads = num_heads,
+        # )
         self.midResBlock = ResBlock(
                 ch,
                 time_embed_dim,
@@ -667,8 +667,8 @@ class UNetModel(nn.Module):
         # self.middle_block.apply(convert_module_to_f16)
         self.output_blocks.apply(convert_module_to_f16)
         self.midResBlock.apply(convert_module_to_f16)
-        self.midSpatialTransformer.apply(convert_module_to_f16)
-        self.AttentionBlock.apply(convert_module_to_f16)
+        # self.midSpatialTransformer.apply(convert_module_to_f16)
+        # self.AttentionBlock.apply(convert_module_to_f16)
 
     def convert_to_fp32(self):
         """
@@ -678,8 +678,8 @@ class UNetModel(nn.Module):
         # self.middle_block.apply(convert_module_to_f32)
         self.output_blocks.apply(convert_module_to_f32)
         self.midResBlock.apply(convert_module_to_f32)
-        self.midSpatialTransformer.apply(convert_module_to_f32)
-        self.AttentionBlock.apply(convert_module_to_f32)
+        # self.midSpatialTransformer.apply(convert_module_to_f32)
+        # self.AttentionBlock.apply(convert_module_to_f32)
 
     # ytxie: The network inputs may contain label y.
     def forward(self, x, timesteps, y=None):
@@ -705,8 +705,8 @@ class UNetModel(nn.Module):
 
         h = self.midResBlock(h, emb)
 
-        h = self.AttentionBlock(h)
-        h = self.midSpatialTransformer(h, y)
+        # h = self.AttentionBlock(h)
+        # h = self.midSpatialTransformer(h, y)
         h = self.midResBlock(h, emb)
 
         for module in self.output_blocks:

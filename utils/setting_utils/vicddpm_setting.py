@@ -105,15 +105,15 @@ def create_gaussian_diffusion(
 def model_defaults():
     return dict(
         image_size=80, # Changed from 128
-        model_channels=32,
+        model_channels=64,
         learn_sigma=False,
-        num_res_blocks=2,
-        attention_resolutions="10", # Changed from "20" based on new size
+        num_res_blocks=1,
+        attention_resolutions="20", # Changed from "20" based on new size
         dropout=0,
-        channel_mult="", # (1, 1, 2, 2, 4) might need adjustment for 80x80? Default could be okay.
+        channel_mult="1, 1, 2, 2, 4", # (1, 1, 2, 2, 4) might need adjustment for 80x80? Default could be okay.
         use_checkpoint=False,
         use_fp16=True, # Keep True if using compatible GPUs
-        num_heads=4,
+        num_heads=2,
         num_head_channels=-1,
         num_heads_upsample=-1,
         use_scale_shift_norm=True,
@@ -204,7 +204,7 @@ def training_setting_defaults():
     return dict(
         batch_size=2,
         microbatch=-1,
-        lr=1e-4,
+        lr=1e-3,
         ema_rate="0.9999",
         log_interval=10,
         save_interval=10000,

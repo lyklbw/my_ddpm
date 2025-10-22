@@ -168,8 +168,9 @@ class GaussianDiffusion(GaussianDiffusion):
                 img = predictor(model, img, t, model_kwargs=model_kwargs, clip=clip)
                 if corrector is not None:
                     assert False, "code of corrector has not been completed"
-            if i % 10 == 0:
-                imgs.append(img.cpu().numpy())
+            # if i % 10 == 0:
+            #     imgs.append(img.cpu().numpy())
+            imgs.append(img.detach().cpu().numpy().copy())
         return img, imgs
 
     def training_losses(self, model, x_start, t, model_kwargs):
