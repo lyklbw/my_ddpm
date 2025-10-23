@@ -67,6 +67,17 @@ class SMOSDataset(Dataset):
         #     padded_original = padded_original / max_val
         #     padded_corrupted = padded_corrupted / max_val # Use same scaling
 
+        max_val = [20, 20]
+        min_val = [-20, -20]
+        # import ipdb; ipdb.set_trace()
+        for i in range(padded_original.shape[0]):
+            padded_original[i] = 2 * (padded_original[i] - min_val[i]) / (max_val[i] - min_val[i]) - 1
+            padded_corrupted[i] = 2 * (padded_corrupted[i] - min_val[i]) / (max_val[i] - min_val[i]) - 1
+            padded_original[i] = torch.clamp(padded_original[i], -1, 1)
+            padded_corrupted[i] = torch.clamp(padded_corrupted[i], -1, 1)
+        
+
+
         return {
             "target": padded_original.float(),    # D_original (Ground Truth)
             "condition": padded_corrupted.float() # D (Corrupted Input)
