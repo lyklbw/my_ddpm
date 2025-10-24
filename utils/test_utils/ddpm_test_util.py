@@ -35,7 +35,7 @@ class DDPMTestLoop(TestLoop):
             os.makedirs(samples_path, exist_ok=True)
 
         k_samples = self.sample(batch_kwargs)
-        self.save_samples(k_samples, samples_path, batch_kwargs)
+        # self.save_samples(k_samples, samples_path, batch_kwargs)
         logger.log(f"complete sampling for {file_name} slice {slice_index}")
 
     def sample(self, batch_kwargs):

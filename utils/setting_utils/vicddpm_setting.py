@@ -204,7 +204,7 @@ def training_setting_defaults():
     return dict(
         batch_size=2,
         microbatch=-1,
-        lr=1e-3,
+        lr=5e-4,
         ema_rate="0.9999",
         log_interval=10,
         save_interval=10000,

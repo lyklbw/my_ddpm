@@ -12,5 +12,6 @@ logs_test/
 data/
 *.log
 smos_model/
+smos_model_10_22/
 smos_model_test/
-test_ouput/
+test_output/
